@@ -1,26 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login } = useAuth();
-
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(credentials);
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-      <button type="submit">Login</button>
-    </form>
+    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '100px' }}>
+      <form onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
-};
+}
 
 export default Login;

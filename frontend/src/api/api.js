@@ -19,6 +19,10 @@ export const deleteStore = (id) => API.delete(`/admin/store/${id}`);
 
 // Owner
 export const getRatings = () => API.get('/owner/ratings');
+export const getMyStores = async () => {
+  return await axios.get('/api/stores/my');
+};
+
 
 // User
 export const getStores = () => API.get('/user/stores');

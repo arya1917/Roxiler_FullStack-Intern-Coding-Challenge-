@@ -15,9 +15,19 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/owner" element={<ProtectedRoute><OwnerDashboard /></ProtectedRoute>} />
-          <Route path="/user" element={<ProtectedRoute><StoreList /></ProtectedRoute>} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute roles={['admin']} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
+          <Route element={<ProtectedRoute roles={['owner']} />}>
+            <Route path="/owner" element={<OwnerDashboard />} />
+          </Route>
+
+          <Route element={<ProtectedRoute roles={['user']} />}>
+            <Route path="/user" element={<StoreList />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>
