@@ -1,40 +1,31 @@
-import React, { createContext, useState, useContext } from 'react';
-import { login as loginAPI, register as registerAPI } from '../api/api';
-import { useNavigate } from 'react-router-dom';
+// src/context/AuthContext.js
+import { createContext, useContext, useState } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
-  const login = async (credentials) => {
-    try {
-      const res = await loginAPI(credentials);
-      setUser(res.data.user);
-      if (res.data.user.role === 'admin') navigate('/admin');
-      else if (res.data.user.role === 'owner') navigate('/owner');
-      else navigate('/user');
-    } catch (err) {
-      console.error(err.response?.data?.message || 'Login failed');
-    }
+  const login = async (email, password) => {
+    const res = await axios.post('http://localhost:5000/api/login', { email, password });
+    setUser(res.data);
+    return res.data.role;
   };
 
-  const register = async (userInfo) => {
-    try {
-      const res = await registerAPI(userInfo);
-      setUser(res.data.user);
-      navigate('/user');
-    } catch (err) {
-      console.error(err.response?.data?.message || 'Register failed');
-    }
+  const signup = async (email, password, role) => {
+    const res = await axios.post('http://localhost:5000/api/signup', { email, password, role });
+    setUser(res.data);
+    return res.data.role;
   };
+
+  const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, login, register }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);
